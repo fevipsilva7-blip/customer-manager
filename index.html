@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Cadastro de Clientes</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app__header">
+      <h1>Sistema de Cadastro de Clientes</h1>
+      <p class="app__subtitle">Gerenciamento completo com CRUD e SQLite</p>
+    </header>
+
+    <section class="panel">
+      <h2 id="form-title">Novo Cliente</h2>
+      <form id="cliente-form" class="cliente-form">
+        <input type="hidden" id="cliente-id">
+        <div class="form-row">
+          <label for="nome">Nome *</label>
+          <input type="text" id="nome" required placeholder="Nome completo">
+        </div>
+        <div class="form-row">
+          <label for="email">E-mail *</label>
+          <input type="email" id="email" required placeholder="email@exemplo.com">
+        </div>
+        <div class="form-row">
+          <label for="telefone">Telefone</label>
+          <input type="text" id="telefone" placeholder="(00) 00000-0000">
+        </div>
+        <div class="form-row">
+          <label for="endereco">Endereço</label>
+          <input type="text" id="endereco" placeholder="Rua, número, cidade">
+        </div>
+        <div class="form-actions">
+          <button type="submit" id="submit-btn">Salvar Cliente</button>
+          <button type="button" id="cancel-btn" class="btn-secondary hidden">Cancelar edição</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel__header">
+        <h2>Clientes Cadastrados</h2>
+        <input type="text" id="search" placeholder="Buscar por nome ou e-mail...">
+      </div>
+      <div class="table-wrapper">
+        <table id="clientes-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Telefone</th>
+              <th>Endereço</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="clientes-body"></tbody>
+        </table>
+        <p id="empty-state" class="empty-state hidden">Nenhum cliente cadastrado ainda.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
