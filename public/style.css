@@ -136,6 +136,11 @@ body {
   min-width: 220px;
 }
 
+#search:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 .table-wrapper {
   overflow-x: auto;
 }
@@ -193,8 +198,73 @@ tbody tr:hover {
 
 .hidden { display: none; }
 
+/* ---------- Celular ---------- */
 @media (max-width: 600px) {
+  body { padding: 20px 12px; }
+  .app__header { margin-bottom: 24px; }
+  .app__header h1 { font-size: 22px; }
+  .panel { padding: 16px; }
+
   .cliente-form { grid-template-columns: 1fr; }
   .panel__header { flex-direction: column; align-items: stretch; }
   #search { min-width: 0; }
+
+  /* 16px evita o zoom automático do iPhone ao tocar no campo */
+  .form-row input,
+  #search {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .form-actions { flex-wrap: wrap; }
+  .form-actions button {
+    flex: 1 1 100%;
+    padding: 12px 20px;
+  }
+
+  /* tabela vira lista de cartões */
+  .table-wrapper { overflow-x: visible; }
+  table, tbody, tr { display: block; width: 100%; }
+  thead { display: none; }
+
+  tbody tr {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: none;
+    text-align: right;
+    word-break: break-word;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 13px;
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  tbody td.actions-cell {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  tbody td.actions-cell::before { content: none; }
+
+  .actions-cell button {
+    flex: 1;
+    padding: 12px;
+    font-size: 14px;
+  }
 }
