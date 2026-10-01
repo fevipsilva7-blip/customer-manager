@@ -11,11 +11,29 @@ const tableBody = document.getElementById('clientes-body');
 const emptyState = document.getElementById('empty-state');
 const searchInput = document.getElementById('search');
 
+const MSG_VAZIO = 'Nenhum cliente cadastrado ainda.';
+
 let clientes = [];
 
 async function fetchClientes() {
-  const res = await fetch('/api/clientes');
-  clientes = await res.json();
+  // Na primeira carga o servidor gratuito pode demorar a "acordar":
+  // mostra um aviso para a pessoa não achar que o site quebrou.
+  if (clientes.length === 0) {
+    emptyState.textContent = 'Carregando clientes... pode levar alguns segundos.';
+    emptyState.classList.remove('hidden');
+  }
+
+  try {
+    const res = await fetch('/api/clientes');
+    if (!res.ok) throw new Error('Falha ao carregar');
+    clientes = await res.json();
+  } catch (err) {
+    emptyState.textContent = 'Não foi possível carregar os clientes. Atualize a página em instantes.';
+    emptyState.classList.remove('hidden');
+    return;
+  }
+
+  emptyState.textContent = MSG_VAZIO;
   renderTable(clientes);
 }
 
@@ -32,10 +50,10 @@ function renderTable(lista) {
     const tr = document.createElement('tr');
 
     tr.innerHTML = `
-      <td>${escapeHtml(cliente.nome)}</td>
-      <td>${escapeHtml(cliente.email)}</td>
-      <td>${escapeHtml(cliente.telefone || '-')}</td>
-      <td>${escapeHtml(cliente.endereco || '-')}</td>
+      <td data-label="Nome">${escapeHtml(cliente.nome)}</td>
+      <td data-label="E-mail">${escapeHtml(cliente.email)}</td>
+      <td data-label="Telefone">${escapeHtml(cliente.telefone || '-')}</td>
+      <td data-label="Endereço">${escapeHtml(cliente.endereco || '-')}</td>
       <td class="actions-cell">
         <button class="btn-edit" data-id="${cliente.id}">Editar</button>
         <button class="btn-delete" data-id="${cliente.id}">Excluir</button>
@@ -73,7 +91,10 @@ function startEdit(id) {
   formTitle.textContent = 'Editar Cliente';
   submitBtn.textContent = 'Atualizar Cliente';
   cancelBtn.classList.remove('hidden');
-  nomeField.focus();
+
+  // No celular, leva a pessoa de volta ao formulário ao tocar em Editar
+  form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  nomeField.focus({ preventScroll: true });
 }
 
 function resetForm() {
@@ -98,15 +119,20 @@ form.addEventListener('submit', async (e) => {
   const url = id ? `/api/clientes/${id}` : '/api/clientes';
   const method = id ? 'PUT' : 'POST';
 
-  const res = await fetch(url, {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-  if (!res.ok) {
-    const error = await res.json();
-    alert(error.error || 'Erro ao salvar cliente.');
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      alert(error.error || 'Erro ao salvar cliente.');
+      return;
+    }
+  } catch (err) {
+    alert('Erro de conexão ao salvar cliente. Tente novamente.');
     return;
   }
 
@@ -119,10 +145,15 @@ cancelBtn.addEventListener('click', resetForm);
 async function deleteCliente(id) {
   if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
 
-  const res = await fetch(`/api/clientes/${id}`, { method: 'DELETE' });
+  try {
+    const res = await fetch(`/api/clientes/${id}`, { method: 'DELETE' });
 
-  if (!res.ok) {
-    alert('Erro ao excluir cliente.');
+    if (!res.ok) {
+      alert('Erro ao excluir cliente.');
+      return;
+    }
+  } catch (err) {
+    alert('Erro de conexão ao excluir cliente. Tente novamente.');
     return;
   }
 
