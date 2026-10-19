@@ -1,4 +1,4 @@
-#  Sistema de Cadastro de Clientes
+#  Customer Manager 
 🔗 **[Acesse o projeto online](https://customer-manager-4hiv.onrender.com/)**
 
 
